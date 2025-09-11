@@ -37,7 +37,7 @@ if not GEMINI_API_KEY:
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize models for math solving
-text_model = genai.GenerativeModel('gemini-2.5-pro')
+text_model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Initialize the classification model with deterministic settings
 classification_generation_config = genai.types.GenerationConfig(
@@ -46,7 +46,7 @@ classification_generation_config = genai.types.GenerationConfig(
 )
 
 classification_model = genai.GenerativeModel(
-    'gemini-2.5-pro',
+    'gemini-2.5-flash',
     generation_config=classification_generation_config
 )
 
@@ -57,7 +57,7 @@ def process_math_problem(prompt: str, image_data=None):
     try:
         if image_data:
             # For vision tasks, we need to use the correct model
-            vision_model = genai.GenerativeModel('gemini-2.5-pro')
+            vision_model = genai.GenerativeModel('gemini-2.5-flash')
             response = vision_model.generate_content([prompt, image_data])
         else:
             # Process text with Gemini Pro
