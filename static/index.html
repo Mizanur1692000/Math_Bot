@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Bot & Message Classifier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh;
+            color: #344767;
+            padding-bottom: 2rem;
+        }
+        
+        .card { 
+            border: none; 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.15);
+        }
+        
+        .nav-tabs {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-tabs .nav-link { 
+            border-radius: 8px 8px 0 0; 
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            color: var(--secondary);
+            border: none;
+            transition: var(--transition);
+            background: transparent;
+        }
+        
+        .nav-tabs .nav-link.active { 
+            color: var(--primary);
+            background-color: transparent;
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none; 
+            border-radius: var(--border-radius); 
+            padding: 12px 28px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+            transition: var(--transition);
+        }
+        
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #304fd4 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
+        }
+        
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+            font-size: 15px;
+            background: #fff;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: #2d3748;
+        }
+        
+        #resultDisplay, #classifyResult { 
+            background-color: #ffffff; 
+            border-radius: var(--border-radius); 
+            padding: 24px; 
+            margin-top: 24px; 
+            min-height: 200px;
+            font-size: 15px;
+            line-height: 1.6;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white; 
+            padding: 60px 0; 
+            text-align: center; 
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+        
+        .header h1 { 
+            font-weight: 700; 
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .section-title { 
+            font-weight: 600; 
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .math-output {
+            font-size: 16px;
+            line-height: 1.7;
+            padding: 20px;
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-header {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-header i {
+            margin-right: 0.5rem;
+        }
+        
+        .classification-safe {
+            background-color: rgba(25, 135, 84, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+        
+        .classification-unsafe {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+        
+        .problem-display {
+            background-color: var(--primary-light);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-style: italic;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 40px 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Math Bot & Message Classifier</h1>
+            <p class="lead">Solve math problems and classify messages with AI-powered tools</p>
+            <p class="lead">Developed by Mizanur Rahman</p>
+        </div>
+    </header>
+
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <h4>Math Problem Solver</h4>
+                    <p>Solve complex math problems with step-by-step solutions using text, images, or URLs.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>Content Classifier</h4>
+                    <p>Detect inappropriate content, bullying, or harmful messages with AI classification.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="feature-icon">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <h4>Image Recognition</h4>
+                    <p>Upload images of math problems or use URLs for AI-powered solutions.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Math Solver Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="section-title"><i class="bi bi-calculator"></i>Math Solver</h4>
+                        <ul class="nav nav-tabs" id="mathTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab">Text</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab">Image Upload</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="prompt-tab" data-bs-toggle="tab" data-bs-target="#prompt" type="button" role="tab">Image + Prompt</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="url-tab" data-bs-toggle="tab" data-bs-target="#url" type="button" role="tab">Image URL</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content mt-3">
+                            <div class="tab-pane fade show active" id="text" role="tabpanel">
+                                <div class="mb-3">
+                                    <label for="textProblem" class="form-label">Enter Math Problem</label>
+                                    <textarea class="form-control" id="textProblem" rows="3" placeholder="e.g., Solve 2x + 3 = 7"></textarea>
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="solveText()">
+                                    <i class="bi bi-send me-2"></i>Solve
+                                </button>
+                            </div>
+                            <div class="tab-pane fade" id="image" role="tabpanel">
+                                <div class="mb-3">
+                                    <label for="imageFile" class="form-label">Upload Image</label>
+                                    <input type="file" class="form-control" id="imageFile" accept="image/*" onchange="previewImage(this, 'imagePreview')">
+                                    <img id="imagePreview" class="preview-image" alt="Image preview">
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="solveImage()">
+                                    <i class="bi bi-cloud-upload me-2"></i>Solve
+                                </button>
+                            </div>
+                            <div class="tab-pane fade" id="prompt" role="tabpanel">
+                                <div class="mb-3">
+                                    <label for="promptImageFile" class="form-label">Upload Image</label>
+                                    <input type="file" class="form-control" id="promptImageFile" accept="image/*" onchange="previewImage(this, 'promptImagePreview')">
+                                    <img id="promptImagePreview" class="preview-image" alt="Image preview">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userPrompt" class="form-label">Your Instructions</label>
+                                    <textarea class="form-control" id="userPrompt" rows="2" placeholder="e.g., Solve for x, explain step by step"></textarea>
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="solveImageWithPrompt()">
+                                    <i class="bi bi-send me-2"></i>Solve with Instructions
+                                </button>
+                            </div>
+                            <div class="tab-pane fade" id="url" role="tabpanel">
+                                <div class="mb-3">
+                                    <label for="imageUrl" class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" id="imageUrl" placeholder="https://example.com/image.jpg">
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="solveUrl()">
+                                    <i class="bi bi-link-45deg me-2"></i>Solve
+                                </button>
+                            </div>
+                        </div>
+                        <div id="resultDisplay"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Classifier Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="section-title"><i class="bi bi-shield-check"></i>Message Classifier</h4>
+                        <div class="mb-3">
+                            <label for="messageInput" class="form-label">Enter Message</label>
+                            <textarea class="form-control" id="messageInput" rows="5" placeholder="Type your message here..."></textarea>
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="classifyMessage()">
+                            <i class="bi bi-fingerprint me-2"></i>Classify
+                        </button>
+                        <div id="classifyResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = window.location.origin;
+
+        // Function to preview uploaded images
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Function to format math output for better display
+        function formatMathOutput(text) {
+            // Clean up the text by removing excessive markdown
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert bold
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Convert italics
+                .replace(/\n/g, '<br>'); // Convert line breaks
+            
+            // Render LaTeX if MathJax is available
+            if (typeof MathJax !== 'undefined') {
+                setTimeout(() => {
+                    MathJax.typeset();
+                }, 100);
+            }
+            
+            return html;
+        }
+
+        // Show loading indicator
+        function showLoading(containerId) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="loading">
+                    <div class="spinner-border text-primary spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Processing your request...</p>
+                </div>
+            `;
+        }
+
+        async function solveText() {
+            const problem = document.getElementById('textProblem').value;
+            if (!problem) {
+                alert('Please enter a problem');
+                return;
+            }
+            
+            showLoading('resultDisplay');
+            
+            try {
+                const response = await fetch(`${API_URL}/solve/text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `problem=${encodeURIComponent(problem)}`
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const formattedSolution = formatMathOutput(data.solution);
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="problem-display">
+                        <strong>Problem:</strong> ${data.problem}
+                    </div>
+                    <div class="result-header">
+                        <i class="bi bi-lightbulb"></i> Solution:
+                    </div>
+                    <div class="math-output">${formattedSolution}</div>
+                `;
+            } catch (error) {
+                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function solveImage() {
+            const file = document.getElementById('imageFile').files[0];
+            if (!file) {
+                alert('Please upload an image');
+                return;
+            }
+            
+            showLoading('resultDisplay');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await fetch(`${API_URL}/solve/image`, { method: 'POST', body: formData });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const formattedSolution = formatMathOutput(data.solution);
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="result-header">
+                        <i class="bi bi-lightbulb"></i> Solution:
+                    </div>
+                    <div class="math-output">${formattedSolution}</div>
+                `;
+            } catch (error) {
+                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function solveImageWithPrompt() {
+            const file = document.getElementById('promptImageFile').files[0];
+            const prompt = document.getElementById('userPrompt').value;
+            
+            if (!file) {
+                alert('Please upload an image');
+                return;
+            }
+            
+            if (!prompt) {
+                alert('Please provide instructions');
+                return;
+            }
+            
+            showLoading('resultDisplay');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('prompt', prompt);
+            
+            try {
+                const response = await fetch(`${API_URL}/solve/image-with-prompt`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const formattedSolution = formatMathOutput(data.solution);
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="problem-display">
+                        <strong>Your Instructions:</strong> ${data.user_prompt}
+                    </div>
+                    <div class="result-header">
+                        <i class="bi bi-lightbulb"></i> Solution:
+                    </div>
+                    <div class="math-output">${formattedSolution}</div>
+                `;
+            } catch (error) {
+                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function solveUrl() {
+            const url = document.getElementById('imageUrl').value;
+            if (!url) {
+                alert('Please enter an image URL');
+                return;
+            }
+            
+            showLoading('resultDisplay');
+            
+            try {
+                const response = await fetch(`${API_URL}/solve/url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `url=${encodeURIComponent(url)}`
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const formattedSolution = formatMathOutput(data.solution);
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="result-header">
+                        <i class="bi bi-lightbulb"></i> Solution:
+                    </div>
+                    <div class="math-output">${formattedSolution}</div>
+                `;
+            } catch (error) {
+                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function classifyMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+            
+            showLoading('classifyResult');
+            
+            try {
+                const response = await fetch(`${API_URL}/classify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `message=${encodeURIComponent(message)}`
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const status = data.classification === 1 ? 'Problematic (1)' : 'Safe (0)';
+                const alertClass = data.classification === 1 ? 'alert-danger classification-unsafe' : 'alert-success classification-safe';
+                const icon = data.classification === 1 ? 'bi-exclamation-triangle' : 'bi-check-circle';
+                
+                document.getElementById('classifyResult').innerHTML = `
+                    <div class="${alertClass}">
+                        <div class="result-header">
+                            <i class="bi ${icon}"></i> Classification Result:
+                        </div>
+                        <p class="mb-2"><strong>Message:</strong> "${data.message}"</p>
+                        <p class="mb-0"><strong>Status:</strong> ${status}</p>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('classifyResult').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
