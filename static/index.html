@@ -269,6 +269,24 @@
             transform: translateY(-5px);
         }
         
+        /* LaTeX equation styling */
+        .math-equation {
+            display: block;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .math-inline {
+            display: inline-block;
+            margin: 0 0.2rem;
+            padding: 0.2rem 0.4rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+        }
+        
         @media (max-width: 768px) {
             .header {
                 padding: 40px 0;
@@ -281,6 +299,11 @@
             .card {
                 margin-bottom: 24px;
             }
+            
+            .math-equation {
+                font-size: 14px;
+                padding: 0.3rem;
+            }
         }
     </style>
 </head>
@@ -289,6 +312,7 @@
         <div class="container">
             <h1>Math Bot & Message Classifier</h1>
             <p class="lead">Solve math problems and classify messages with AI-powered tools</p>
+            <p class="lead">Now with enhanced LaTeX rendering for complex equations</p>
             <p class="lead">Developed by Mizanur Rahman</p>
         </div>
     </header>
@@ -316,10 +340,10 @@
             <div class="col-md-4 mb-4">
                 <div class="card feature-card h-100">
                     <div class="feature-icon">
-                        <i class="bi bi-image"></i>
+                        <i class="bi bi-code-slash"></i>
                     </div>
-                    <h4>Image Recognition</h4>
-                    <p>Upload images of math problems or use URLs for AI-powered solutions.</p>
+                    <h4>LaTeX Support</h4>
+                    <p>Enhanced LaTeX rendering for complex mathematical equations and expressions.</p>
                 </div>
             </div>
         </div>
@@ -343,12 +367,15 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="url-tab" data-bs-toggle="tab" data-bs-target="#url" type="button" role="tab">Image URL</button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="check-tab" data-bs-toggle="tab" data-bs-target="#check" type="button" role="tab">Check Solution</button>
+                            </li>
                         </ul>
                         <div class="tab-content mt-3">
                             <div class="tab-pane fade show active" id="text" role="tabpanel">
                                 <div class="mb-3">
                                     <label for="textProblem" class="form-label">Enter Math Problem</label>
-                                    <textarea class="form-control" id="textProblem" rows="3" placeholder="e.g., Solve 2x + 3 = 7"></textarea>
+                                    <textarea class="form-control" id="textProblem" rows="3" placeholder="e.g., Solve 2x + 3 = 7 or ∫(x²)dx from 0 to 1"></textarea>
                                 </div>
                                 <button class="btn btn-primary w-100" onclick="solveText()">
                                     <i class="bi bi-send me-2"></i>Solve
@@ -385,6 +412,20 @@
                                 </div>
                                 <button class="btn btn-primary w-100" onclick="solveUrl()">
                                     <i class="bi bi-link-45deg me-2"></i>Solve
+                                </button>
+                            </div>
+                            <div class="tab-pane fade" id="check" role="tabpanel">
+                                <div class="mb-3">
+                                    <label for="checkProblem" class="form-label">Enter Math Problem</label>
+                                    <textarea class="form-control" id="checkProblem" rows="2" placeholder="e.g., Solve 2x + 3 = 7"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="solutionImageFile" class="form-label">Upload Solution Image</label>
+                                    <input type="file" class="form-control" id="solutionImageFile" accept="image/*" onchange="previewImage(this, 'solutionImagePreview')">
+                                    <img id="solutionImagePreview" class="preview-image" alt="Solution preview">
+                                </div>
+                                <button class="btn btn-primary w-100" onclick="checkSolution()">
+                                    <i class="bi bi-check-circle me-2"></i>Check Solution
                                 </button>
                             </div>
                         </div>
@@ -435,18 +476,28 @@
             }
         }
 
-        // Function to format math output for better display
+        // Function to format math output with enhanced LaTeX support
         function formatMathOutput(text) {
-            // Clean up the text by removing excessive markdown
-            let html = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert bold
-                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Convert italics
-                .replace(/\n/g, '<br>'); // Convert line breaks
+            // First, process LaTeX expressions
+            let html = text;
+            
+            // Replace display equations ($$...$$)
+            html = html.replace(/\$\$(.*?)\$\$/gs, function(match, equation) {
+                return `<div class="math-equation">\\[${equation}\\]</div>`;
+            });
+            
+            // Replace inline equations ($...$)
+            html = html.replace(/\$(.*?)\$/g, function(match, equation) {
+                return `<span class="math-inline">\\(${equation}\\)</span>`;
+            });
+            
+            // Convert line breaks
+            html = html.replace(/\n/g, '<br>');
             
             // Render LaTeX if MathJax is available
             if (typeof MathJax !== 'undefined') {
                 setTimeout(() => {
-                    MathJax.typeset();
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
                 }, 100);
             }
             
@@ -496,6 +547,11 @@
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
+                
+                // Re-render MathJax after content is loaded
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+                }
             } catch (error) {
                 document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
             }
@@ -527,6 +583,11 @@
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
+                
+                // Re-render MathJax after content is loaded
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+                }
             } catch (error) {
                 document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
             }
@@ -573,6 +634,11 @@
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
+                
+                // Re-render MathJax after content is loaded
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+                }
             } catch (error) {
                 document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
             }
@@ -605,6 +671,73 @@
                         <i class="bi bi-lightbulb"></i> Solution:
                     </div>
                     <div class="math-output">${formattedSolution}</div>
+                `;
+                
+                // Re-render MathJax after content is loaded
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+                }
+            } catch (error) {
+                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function checkSolution() {
+            const problem = document.getElementById('checkProblem').value;
+            const file = document.getElementById('solutionImageFile').files[0];
+            
+            if (!problem) {
+                alert('Please enter a problem');
+                return;
+            }
+            
+            if (!file) {
+                alert('Please upload a solution image');
+                return;
+            }
+            
+            showLoading('resultDisplay');
+            
+            const formData = new FormData();
+            formData.append('problem', problem);
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch(`${API_URL}/check-solution`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                let resultClass = 'alert-warning';
+                let icon = 'bi-question-circle';
+                
+                if (data.result.toUpperCase().includes('CORRECT')) {
+                    resultClass = 'alert-success';
+                    icon = 'bi-check-circle';
+                } else if (data.result.toUpperCase().includes('INCORRECT')) {
+                    resultClass = 'alert-danger';
+                    icon = 'bi-x-circle';
+                }
+                
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="problem-display">
+                        <strong>Problem:</strong> ${data.problem}
+                    </div>
+                    <div class="problem-display mt-2">
+                        <strong>Correct Solution:</strong> ${data.correct_solution}
+                    </div>
+                    <div class="alert ${resultClass} mt-3">
+                        <div class="result-header">
+                            <i class="bi ${icon}"></i> Result:
+                        </div>
+                        <p class="mb-0">${data.result}</p>
+                    </div>
                 `;
             } catch (error) {
                 document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
