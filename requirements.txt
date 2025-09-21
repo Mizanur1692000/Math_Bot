@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 google-generativeai
-requests=
+requests
 python-dotenv
 python-multipart
