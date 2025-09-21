@@ -378,45 +378,137 @@ If you cannot determine the final answer, return "UNCLEAR".
         raise HTTPException(status_code=500, detail=str(e))
 
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
+def _extract_text_from_genai_response(res) -> str:
+    """
+    Robust extraction for google.generativeai responses.
+    Tries .text, result.parts, candidates[].content.parts, top-level parts, then falls back to str(res).
+    """
+    # If it's already a string
+    if isinstance(res, str):
+        return res
+
+    # 1) safe .text (catch if accessor raises)
+    try:
+        txt = getattr(res, "text", None)
+        if isinstance(txt, str) and txt.strip():
+            return txt
+    except Exception:
+        # .text accessor can raise for complex responses; ignore and continue
+        pass
+
+    # 2) result.parts -> join
+    result = getattr(res, "result", None)
+    if result is not None:
+        parts = getattr(result, "parts", None)
+        if parts:
+            out = []
+            for p in parts:
+                t = getattr(p, "text", None)
+                if t:
+                    out.append(t)
+            if out:
+                return "".join(out)
+
+        # result.candidates[].content.parts
+        candidates = getattr(result, "candidates", None)
+        if candidates:
+            for cand in candidates:
+                content = getattr(cand, "content", None)
+                if content:
+                    parts = getattr(content, "parts", None)
+                    if parts:
+                        out = [getattr(p, "text", "") for p in parts if getattr(p, "text", None)]
+                        if any(out):
+                            return "".join(out)
+                if getattr(cand, "text", None):
+                    return cand.text
+
+    # 3) top-level candidates / outputs / choices
+    candidates = getattr(res, "candidates", None) or getattr(res, "outputs", None) or getattr(res, "choices", None)
+    if candidates:
+        for cand in candidates:
+            content = getattr(cand, "content", None)
+            if content:
+                parts = getattr(content, "parts", None)
+                if parts:
+                    out = [getattr(p, "text", "") for p in parts if getattr(p, "text", None)]
+                    if any(out):
+                        return "".join(out)
+            if getattr(cand, "text", None):
+                return cand.text
+            if getattr(cand, "output_text", None):
+                return cand.output_text
+
+    # 4) top-level parts
+    parts = getattr(res, "parts", None)
+    if parts:
+        out = [getattr(p, "text", "") for p in parts if getattr(p, "text", None)]
+        if any(out):
+            return "".join(out)
+
+    # 5) fallback: log repr and return str(res)
+    try:
+        logging.info("Unrecognized GenAI response shape; repr(response)=%s", repr(res))
+    except Exception:
+        pass
+    return str(res)
+
 
 @app.post("/classify")
 async def classify_message(message: str = Form(...)):
     """
-    Classify a message to detect inappropriate content
-    Returns 1 if content is problematic, 0 if normal
+    Classify a message: return 1 if harmful, 0 otherwise.
+    Robust to Gemini SDK response shapes.
     """
     classification_prompt = f"""
-    Analyze the following message and classify it. Return only a single digit (0 or 1) with no additional text.
-    
-    Return 1 if the message contains any of the following:
-    - Bullying or harassment
-    - Slang or inappropriate language
-    - Dangerous links (malware, viruses, etc.)
-    - Phishing attempts
-    - Any other harmful content
-    
-    Return 0 if the message is normal, safe conversation.
-    
-    Message: {message}
-    
-    Classification:
-    """
-    
+Analyze the following message and classify it. Return only a single digit (0 or 1) with no additional text.
+
+Return 1 if the message contains any of the following:
+- Bullying or harassment
+- Slang or inappropriate language
+- Dangerous links (malware, viruses, etc.)
+- Phishing attempts
+- Any other harmful content
+
+Return 0 if the message is normal, safe conversation.
+
+Message: {message}
+
+Classification:
+"""
+
     try:
+        # call the classification model (you created earlier with generation_config)
         response = classification_model.generate_content(classification_prompt)
-        
-        # Extract just the classification digit
-        classification = re.search(r'\d', response.text)
-        
-        if classification:
-            result = int(classification.group(0))
-            return JSONResponse(content={"message": message, "classification": result})
-        else:
-            # If no digit found, default to safe (0)
+
+        # robustly extract text from response
+        raw = _extract_text_from_genai_response(response).strip()
+        logging.info("Classify raw text: %s", raw)
+
+        # 1) prefer a standalone digit 0 or 1 (not part of other digits)
+        m = re.search(r'(?<!\d)([01])(?!\d)', raw)
+        if m:
+            classification = int(m.group(1))
+            return JSONResponse(content={"message": message, "classification": classification})
+
+        # 2) accept words "zero" / "one"
+        raw_lower = raw.lower()
+        if "one" in raw_lower and "zero" not in raw_lower:
+            return JSONResponse(content={"message": message, "classification": 1})
+        if "zero" in raw_lower and "one" not in raw_lower:
             return JSONResponse(content={"message": message, "classification": 0})
-            
+
+        # 3) fallback: default to 0 (safe) per your requirement
+        return JSONResponse(content={"message": message, "classification": 0})
+
     except Exception as e:
+        # log the exception for debugging and return 500
+        logging.exception("Error in classify endpoint")
         raise HTTPException(status_code=500, detail=f"Error classifying message: {str(e)}")
+
 
 MAX_QUESTIONS = 20  # safety limit
 
