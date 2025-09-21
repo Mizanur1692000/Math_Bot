@@ -12,441 +12,1261 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --primary-light: #eef2ff;
-            --secondary: #6c757d;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #198754;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #0dcaf0;
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
-            --border-radius: 12px;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #6366f1;
+            --accent: #34d399;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            
+            /* Main backgrounds */
+            --bg-primary: #0a0e27;
+            --bg-secondary: #1a1b3a;
+            --bg-tertiary: #2d2f54;
+            --bg-card: rgba(26, 27, 58, 0.95);
+            --bg-glass: rgba(45, 47, 84, 0.85);
+            
+            /* Text colors */
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            /* Border colors */
+            --border-primary: rgba(16, 185, 129, 0.2);
+            --border-secondary: rgba(99, 102, 241, 0.15);
+            --border-subtle: rgba(203, 213, 225, 0.1);
+            
+            /* Shadow colors */
+            --shadow-primary: rgba(16, 185, 129, 0.15);
+            --shadow-secondary: rgba(10, 14, 39, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body { 
-            background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
+            background: radial-gradient(ellipse at top, var(--bg-secondary) 0%, var(--bg-primary) 50%, #050817 100%);
             font-family: 'Inter', sans-serif; 
             min-height: 100vh;
-            color: #344767;
-            padding-bottom: 2rem;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
         }
         
-        .card { 
-            border: none; 
-            border-radius: var(--border-radius); 
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+        /* Enhanced background with animated elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(52, 211, 153, 0.02) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.15);
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
         
-        .nav-tabs {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
         }
         
-        .nav-tabs .nav-link { 
-            border-radius: 8px 8px 0 0; 
-            font-weight: 500;
-            padding: 0.75rem 1.25rem;
-            color: var(--secondary);
-            border: none;
-            transition: var(--transition);
-            background: transparent;
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
         }
         
-        .nav-tabs .nav-link.active { 
-            color: var(--primary);
-            background-color: transparent;
-            border-bottom: 3px solid var(--primary);
-            font-weight: 600;
-        }
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 15s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 3s; animation-duration: 18s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 6s; animation-duration: 22s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 9s; animation-duration: 16s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 12s; animation-duration: 20s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 2s; animation-duration: 19s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 5s; animation-duration: 17s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 8s; animation-duration: 21s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 11s; animation-duration: 14s; }
         
-        .nav-tabs .nav-link:hover {
-            color: var(--primary);
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-        
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none; 
-            border-radius: var(--border-radius); 
-            padding: 12px 28px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
-            transition: var(--transition);
-        }
-        
-        .btn-primary:hover { 
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #304fd4 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
-        }
-        
-        .form-control, .form-select {
-            border-radius: var(--border-radius);
-            padding: 14px 16px;
-            border: 1px solid #e2e8f0;
-            transition: var(--transition);
-            font-size: 15px;
-            background: #fff;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-        }
-        
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-            color: #2d3748;
-        }
-        
-        #resultDisplay, #classifyResult { 
-            background-color: #ffffff; 
-            border-radius: var(--border-radius); 
-            padding: 24px; 
-            margin-top: 24px; 
-            min-height: 200px;
-            font-size: 15px;
-            line-height: 1.6;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-        
-        .header { 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white; 
-            padding: 60px 0; 
-            text-align: center; 
-            margin-bottom: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        /* Advanced glass morphism */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px var(--shadow-secondary),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
-        .header::before {
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.05), 
+                transparent
+            );
+            transition: left 0.6s ease;
+        }
+        
+        .glass-card:hover::before {
+            left: 100%;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-primary);
+            box-shadow: 
+                0 20px 40px var(--shadow-secondary),
+                0 0 0 1px var(--border-primary),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Header improvements */
+        .header {
+            padding: 100px 0 80px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 80px;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .header h1 {
+            font-weight: 700;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInDown 1s ease-out;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            animation: slideInUp 1s ease-out 0.2s both;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .developer-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-primary);
+            border-radius: 50px;
+            padding: 12px 24px;
+            margin-top: 30px;
+            animation: slideInUp 1s ease-out 0.4s both;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .developer-badge:hover {
+            transform: scale(1.05) translateY(-2px);
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px var(--shadow-primary);
+        }
+        
+        .developer-badge i {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Enhanced feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+            padding: 0 20px;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            transform: rotate(30deg);
+            background: conic-gradient(
+                from 0deg, 
+                transparent 0deg, 
+                var(--primary) 90deg, 
+                transparent 180deg
+            );
+            animation: rotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
-        .header h1 { 
-            font-weight: 700; 
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            position: relative;
+        .feature-card:hover::before {
+            opacity: 0.05;
         }
         
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            position: relative;
+        .feature-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--border-primary);
+            box-shadow: 
+                0 25px 50px var(--shadow-secondary),
+                0 0 0 1px var(--border-primary);
         }
         
-        .section-title { 
-            font-weight: 600; 
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            font-size: 1.25rem;
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             display: flex;
             align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            font-size: 2rem;
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+        
+        .feature-card h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+            font-size: 0.95rem;
+        }
+        
+        /* Main content layout */
+        .main-content {
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dual-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        
+        /* Section titles */
+        .section-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-bottom: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 2px;
         }
         
         .section-title i {
-            margin-right: 0.75rem;
+            margin-right: 12px;
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+        }
+        
+        /* Enhanced interactive tabs */
+        .custom-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-subtle);
+            overflow-x: auto;
+            position: relative;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .custom-tab {
+            flex: 1;
+            min-width: 130px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Gradient background for tabs */
+        .custom-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                #10b981 0%, 
+                #059669 30%, 
+                #047857 60%, 
+                #065f46 100%);
+            border-radius: 14px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0.8);
+        }
+        
+        /* Shimmer effect */
+        .custom-tab::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg) translate(-100%, -100%);
+            transition: transform 0.6s ease;
+            opacity: 0;
+        }
+        
+        .custom-tab span {
+            position: relative;
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+        
+        /* Active tab styles */
+        .custom-tab.active::before {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 
+                0 8px 25px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .custom-tab.active::after {
+            opacity: 1;
+            transform: rotate(45deg) translate(100%, 100%);
+        }
+        
+        .custom-tab.active {
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Hover effects */
+        .custom-tab:hover:not(.active) {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.1) 100%);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+        
+        .custom-tab:hover:not(.active)::before {
+            opacity: 0.3;
+            transform: scale(0.9);
+        }
+        
+        /* Pulse animation for active tab */
+        .custom-tab.active {
+            animation: tabPulse 2s infinite;
+        }
+        
+        @keyframes tabPulse {
+            0%, 100% {
+                box-shadow: 
+                    0 8px 25px rgba(16, 185, 129, 0.4),
+                    0 0 0 0 rgba(16, 185, 129, 0.3);
+            }
+            50% {
+                box-shadow: 
+                    0 8px 25px rgba(16, 185, 129, 0.4),
+                    0 0 0 8px rgba(16, 185, 129, 0);
+            }
+        }
+        
+        /* Interactive button effects */
+        .interactive-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interactive-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+        
+        .interactive-btn:hover::before {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        
+        /* Tab content animations */
+        .tab-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            animation: slideInFromBottom 0.5s ease-out;
+        }
+        
+        .tab-content:hover {
+            border-color: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes slideInFromBottom {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        /* Enhanced form controls */
+        .form-control, .form-select {
+            background: rgba(45, 47, 84, 0.6);
+            border: 2px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px 20px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(45, 47, 84, 0.8);
+            border-color: var(--primary);
+            box-shadow: 
+                0 0 0 4px rgba(16, 185, 129, 0.15),
+                0 8px 25px rgba(16, 185, 129, 0.1);
+            color: var(--text-primary);
+            outline: none;
+            transform: translateY(-2px);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        /* Enhanced interactive buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, 
+                #10b981 0%, 
+                #059669 25%, 
+                #047857 50%, 
+                #065f46 75%, 
+                #064e3b 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 18px 36px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            box-shadow: 
+                0 8px 25px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Animated gradient overlay */
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.4) 40%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0.4) 60%,
+                transparent 70%
+            );
+            transform: rotate(45deg) translate(-100%, -100%);
+            transition: transform 0.8s ease;
+            opacity: 0;
+        }
+        
+        /* Ripple effect */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+        
+        /* Hover effects */
+        .btn-primary:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(100%, 100%);
+        }
+        
+        .btn-primary:hover::after {
+            width: 300px;
+            height: 300px;
+            opacity: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: linear-gradient(135deg, 
+                #34d399 0%, 
+                #10b981 25%, 
+                #059669 50%, 
+                #047857 75%, 
+                #065f46 100%);
+            box-shadow: 
+                0 15px 40px rgba(16, 185, 129, 0.5),
+                0 0 0 3px rgba(52, 211, 153, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(52, 211, 153, 0.6);
+        }
+        
+        /* Active/pressed state */
+        .btn-primary:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 
+                0 8px 20px rgba(16, 185, 129, 0.4),
+                0 0 0 2px rgba(16, 185, 129, 0.3),
+                inset 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.1s ease;
+        }
+        
+        /* Button content styling */
+        .btn-primary span {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover span {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Loading state for buttons */
+        .btn-primary.loading {
+            pointer-events: none;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            animation: buttonPulse 1.5s infinite;
+        }
+        
+        @keyframes buttonPulse {
+            0%, 100% {
+                box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(107, 114, 128, 0.5);
+            }
+        }
+        
+        /* Focus states for accessibility */
+        .btn-primary:focus {
+            outline: none;
+            box-shadow: 
+                0 15px 40px rgba(16, 185, 129, 0.4),
+                0 0 0 4px rgba(52, 211, 153, 0.5);
+        }
+        
+        /* Result containers */
+        .result-container {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 32px;
+            margin-top: 32px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            min-height: 200px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .problem-display {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--primary);
+            color: var(--text-primary);
         }
         
         .math-output {
-            font-size: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 24px;
+            color: var(--text-primary);
             line-height: 1.7;
-            padding: 20px;
-            background-color: var(--primary-light);
-            border-radius: var(--border-radius);
-            margin-top: 20px;
-            white-space: pre-wrap;
-            font-family: 'Inter', sans-serif;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            flex-direction: column;
-        }
-        
-        .spinner {
-            width: 3rem;
-            height: 3rem;
-            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
         }
         
         .result-header {
             font-weight: 600;
             color: var(--primary);
-            margin-bottom: 1rem;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
+            font-size: 1.1rem;
         }
         
         .result-header i {
-            margin-right: 0.5rem;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Loading improvements */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-primary);
+        }
+        
+        .custom-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(16, 185, 129, 0.2);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert improvements */
+        .alert {
+            border: none;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            backdrop-filter: blur(12px);
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-left: 4px solid var(--success);
+            color: var(--text-primary);
+        }
+        
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 4px solid var(--danger);
+            color: var(--text-primary);
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid var(--warning);
+            color: var(--text-primary);
         }
         
         .classification-safe {
-            background-color: rgba(25, 135, 84, 0.1);
-            border-left: 4px solid var(--success);
-            padding: 20px;
-            border-radius: var(--border-radius);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 16px;
+            padding: 24px;
+            color: var(--text-primary);
         }
         
         .classification-unsafe {
-            background-color: rgba(220, 53, 69, 0.1);
-            border-left: 4px solid var(--danger);
-            padding: 20px;
-            border-radius: var(--border-radius);
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 16px;
+            padding: 24px;
+            color: var(--text-primary);
         }
         
-        .problem-display {
-            background-color: var(--primary-light);
-            padding: 16px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            font-style: italic;
-            border-left: 3px solid var(--primary);
+        /* Smart input sections */
+        .smart-input-section {
+            background: rgba(45, 47, 84, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px dashed var(--border-primary);
+            transition: all 0.3s ease;
         }
         
-        .preview-image {
-            max-width: 100%;
-            border-radius: var(--border-radius);
-            margin-top: 10px;
-            display: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .smart-input-section:hover {
+            border-color: var(--primary);
+            background: rgba(45, 47, 84, 0.6);
         }
         
-        .feature-icon {
-            width: 50px;
-            height: 50px;
+        .input-option {
+            background: rgba(45, 47, 84, 0.3);
             border-radius: 12px;
-            background: var(--primary-light);
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+        
+        .input-option:hover {
+            border-color: var(--border-primary);
+        }
+        
+        .option-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .option-header i {
+            margin-right: 8px;
             color: var(--primary);
-            font-size: 1.5rem;
         }
         
-        .feature-card {
-            text-align: center;
-            padding: 1.5rem;
-            transition: var(--transition);
+        /* Image preview */
+        .preview-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 16px;
+            box-shadow: 0 8px 25px var(--shadow-secondary);
+            transition: all 0.3s ease;
+            display: none;
+            border: 2px solid var(--border-subtle);
         }
         
-        .feature-card:hover {
-            transform: translateY(-5px);
+        .preview-image:hover {
+            transform: scale(1.02);
+            border-color: var(--border-primary);
         }
         
-        /* LaTeX equation styling */
-        .math-equation {
-            display: block;
-            margin: 1rem 0;
-            padding: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            overflow-x: auto;
-        }
-        
-        .math-inline {
-            display: inline-block;
-            margin: 0 0.2rem;
-            padding: 0.2rem 0.4rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 4px;
-        }
-        
+        /* Responsive design */
         @media (max-width: 768px) {
-            .header {
-                padding: 40px 0;
+            .dual-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .custom-tabs {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .custom-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .custom-tab {
+                flex-shrink: 0;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
-            .card {
-                margin-bottom: 24px;
+            .tab-content {
+                padding: 24px;
             }
-            
-            .math-equation {
-                font-size: 14px;
-                padding: 0.3rem;
-            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Selection styling */
+        ::selection {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
     </style>
 </head>
 <body>
+    <!-- Floating particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <header class="header">
         <div class="container">
             <h1>Math Bot & Message Classifier</h1>
-            <p class="lead">Solve math problems and classify messages with AI-powered tools</p>
-            <p class="lead">Now with enhanced LaTeX rendering for complex equations</p>
-            <p class="lead">Developed by Mizanur Rahman</p>
+            <p>Solve complex mathematical problems and classify messages with advanced AI-powered tools</p>
+            <p>Enhanced with LaTeX rendering, smart image processing, and intelligent analysis</p>
+            <div class="developer-badge">
+                <i class="bi bi-code-slash"></i>
+                Developed by Mizanur Rahman
+            </div>
         </div>
     </header>
 
-    <div class="container my-5">
-        <div class="row mb-5">
-            <div class="col-md-4 mb-4">
-                <div class="card feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="bi bi-calculator"></i>
-                    </div>
-                    <h4>Math Problem Solver</h4>
-                    <p>Solve complex math problems with step-by-step solutions using text, images, or URLs.</p>
+    <div class="container">
+        <!-- Feature Cards -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-calculator"></i>
                 </div>
+                <h4>Advanced Math Solver</h4>
+                <p>Solve complex mathematical problems with step-by-step solutions using text, images, or URLs with AI precision and detailed explanations.</p>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <h4>Content Classifier</h4>
-                    <p>Detect inappropriate content, bullying, or harmful messages with AI classification.</p>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
                 </div>
+                <h4>Smart Content Filter</h4>
+                <p>Detect inappropriate content, cyberbullying, and harmful messages using state-of-the-art AI classification algorithms with high accuracy.</p>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card feature-card h-100">
-                    <div class="feature-icon">
-                        <i class="bi bi-code-slash"></i>
-                    </div>
-                    <h4>LaTeX Support</h4>
-                    <p>Enhanced LaTeX rendering for complex mathematical equations and expressions.</p>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-question-circle"></i>
                 </div>
+                <h4>Question Generator</h4>
+                <p>Generate custom math problems for any grade level and topic to practice and improve your mathematical skills with targeted learning.</p>
             </div>
         </div>
 
-        <div class="row">
-            <!-- Math Solver Section -->
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="section-title"><i class="bi bi-calculator"></i>Math Solver</h4>
-                        <ul class="nav nav-tabs" id="mathTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab">Text</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab">Image Upload</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="prompt-tab" data-bs-toggle="tab" data-bs-target="#prompt" type="button" role="tab">Image + Prompt</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="url-tab" data-bs-toggle="tab" data-bs-target="#url" type="button" role="tab">Image URL</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="check-tab" data-bs-toggle="tab" data-bs-target="#check" type="button" role="tab">Check Solution</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content mt-3">
-                            <div class="tab-pane fade show active" id="text" role="tabpanel">
-                                <div class="mb-3">
-                                    <label for="textProblem" class="form-label">Enter Math Problem</label>
-                                    <textarea class="form-control" id="textProblem" rows="3" placeholder="e.g., Solve 2x + 3 = 7 or ∫(x²)dx from 0 to 1"></textarea>
-                                </div>
-                                <button class="btn btn-primary w-100" onclick="solveText()">
-                                    <i class="bi bi-send me-2"></i>Solve
-                                </button>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Question Generator Section -->
+            <div class="glass-card">
+                <div style="padding: 48px;">
+                    <h4 class="section-title">
+                        <i class="bi bi-question-circle"></i>
+                        Math Question Generator
+                    </h4>
+                    
+                    <div class="tab-content">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="gradeSelect" class="form-label">
+                                    <i class="bi bi-mortarboard"></i>Grade Level
+                                </label>
+                                <select class="form-control" id="gradeSelect">
+                                    <option value="">Select Grade</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                    <option value="7">Grade 7</option>
+                                    <option value="8">Grade 8</option>
+                                    <option value="9">Grade 9</option>
+                                    <option value="10">Grade 10</option>
+                                    <option value="11">Grade 11</option>
+                                    <option value="12">Grade 12</option>
+                                </select>
                             </div>
-                            <div class="tab-pane fade" id="image" role="tabpanel">
-                                <div class="mb-3">
-                                    <label for="imageFile" class="form-label">Upload Image</label>
-                                    <input type="file" class="form-control" id="imageFile" accept="image/*" onchange="previewImage(this, 'imagePreview')">
-                                    <img id="imagePreview" class="preview-image" alt="Image preview">
-                                </div>
-                                <button class="btn btn-primary w-100" onclick="solveImage()">
-                                    <i class="bi bi-cloud-upload me-2"></i>Solve
-                                </button>
+                            <div class="col-md-4 mb-3">
+                                <label for="subjectInput" class="form-label">
+                                    <i class="bi bi-book"></i>Topic/Subject
+                                </label>
+                                <input type="text" class="form-control" id="subjectInput" placeholder="e.g., Algebra, Geometry, Fractions">
                             </div>
-                            <div class="tab-pane fade" id="prompt" role="tabpanel">
-                                <div class="mb-3">
-                                    <label for="promptImageFile" class="form-label">Upload Image</label>
-                                    <input type="file" class="form-control" id="promptImageFile" accept="image/*" onchange="previewImage(this, 'promptImagePreview')">
-                                    <img id="promptImagePreview" class="preview-image" alt="Image preview">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="userPrompt" class="form-label">Your Instructions</label>
-                                    <textarea class="form-control" id="userPrompt" rows="2" placeholder="e.g., Solve for x, explain step by step"></textarea>
-                                </div>
-                                <button class="btn btn-primary w-100" onclick="solveImageWithPrompt()">
-                                    <i class="bi bi-send me-2"></i>Solve with Instructions
-                                </button>
-                            </div>
-                            <div class="tab-pane fade" id="url" role="tabpanel">
-                                <div class="mb-3">
-                                    <label for="imageUrl" class="form-label">Image URL</label>
-                                    <input type="url" class="form-control" id="imageUrl" placeholder="https://example.com/image.jpg">
-                                </div>
-                                <button class="btn btn-primary w-100" onclick="solveUrl()">
-                                    <i class="bi bi-link-45deg me-2"></i>Solve
-                                </button>
-                            </div>
-                            <div class="tab-pane fade" id="check" role="tabpanel">
-                                <div class="mb-3">
-                                    <label for="checkProblem" class="form-label">Enter Math Problem</label>
-                                    <textarea class="form-control" id="checkProblem" rows="2" placeholder="e.g., Solve 2x + 3 = 7"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="solutionImageFile" class="form-label">Upload Solution Image</label>
-                                    <input type="file" class="form-control" id="solutionImageFile" accept="image/*" onchange="previewImage(this, 'solutionImagePreview')">
-                                    <img id="solutionImagePreview" class="preview-image" alt="Solution preview">
-                                </div>
-                                <button class="btn btn-primary w-100" onclick="checkSolution()">
-                                    <i class="bi bi-check-circle me-2"></i>Check Solution
-                                </button>
+                            <div class="col-md-4 mb-3">
+                                <label for="questionCount" class="form-label">
+                                    <i class="bi bi-hash"></i>Number of Questions
+                                </label>
+                                <select class="form-control" id="questionCount">
+                                    <option value="1">1 Question</option>
+                                    <option value="3">3 Questions</option>
+                                    <option value="5">5 Questions</option>
+                                    <option value="10">10 Questions</option>
+                                </select>
                             </div>
                         </div>
-                        <div id="resultDisplay"></div>
+                        <button class="btn btn-primary w-100" onclick="generateQuestions()">
+                            <span><i class="bi bi-magic me-2"></i>Generate Questions</span>
+                        </button>
                     </div>
+
+                    <div id="questionResult" class="result-container"></div>
                 </div>
             </div>
 
-            <!-- Message Classifier Section -->
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="section-title"><i class="bi bi-shield-check"></i>Message Classifier</h4>
-                        <div class="mb-3">
-                            <label for="messageInput" class="form-label">Enter Message</label>
-                            <textarea class="form-control" id="messageInput" rows="5" placeholder="Type your message here..."></textarea>
+            <!-- Dual Column Layout for Solver and Classifier -->
+            <div class="dual-column">
+                <!-- Math Solver Section -->
+                <div class="glass-card">
+                    <div style="padding: 48px;">
+                        <h4 class="section-title">
+                            <i class="bi bi-calculator"></i>
+                            Math Problem Solver
+                        </h4>
+                    
+                        <div class="custom-tabs">
+                            <button class="custom-tab active" onclick="switchTab('text', event)">
+                                <span>Text Problem</span>
+                            </button>
+                            <button class="custom-tab" onclick="switchTab('image', event)">
+                                <span>Image Only</span>
+                            </button>
+                            <button class="custom-tab" onclick="switchTab('prompt', event)">
+                                <span>Smart Input</span>
+                            </button>
+                            <button class="custom-tab" onclick="switchTab('url', event)">
+                                <span>Image URL</span>
+                            </button>
+                            <button class="custom-tab" onclick="switchTab('check', event)">
+                                <span>Verify Solution</span>
+                            </button>
                         </div>
-                        <button class="btn btn-primary w-100" onclick="classifyMessage()">
-                            <i class="bi bi-fingerprint me-2"></i>Classify
-                        </button>
-                        <div id="classifyResult"></div>
+
+                        <!-- Text Tab -->
+                        <div id="text-content" class="tab-content">
+                            <div class="mb-3">
+                                <label for="textProblem" class="form-label">
+                                    <i class="bi bi-pencil-square"></i>Enter Math Problem
+                                </label>
+                                <textarea class="form-control" id="textProblem" rows="4" placeholder="e.g., Solve 2x² + 3x - 5 = 0 or ∫(x³ + 2x)dx from 0 to 2"></textarea>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="solveText()">
+                                <span><i class="bi bi-lightning-charge me-2"></i>Solve Problem</span>
+                            </button>
+                        </div>
+
+                        <!-- Image Tab -->
+                        <div id="image-content" class="tab-content" style="display: none;">
+                            <div class="mb-3">
+                                <label for="imageFile" class="form-label">
+                                    <i class="bi bi-image"></i>Upload Math Problem Image
+                                </label>
+                                <input type="file" class="form-control" id="imageFile" accept="image/*" onchange="previewImage(this, 'imagePreview')">
+                                <img id="imagePreview" class="preview-image" alt="Image preview">
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="solveImage()">
+                                <span><i class="bi bi-cloud-upload me-2"></i>Analyze Image</span>
+                            </button>
+                        </div>
+
+                        <!-- Smart Input Tab -->
+                        <div id="prompt-content" class="tab-content" style="display: none;">
+                            <div class="smart-input-section">
+                                <h6 style="color: var(--primary); margin-bottom: 20px; font-weight: 600;">
+                                    <i class="bi bi-magic me-2"></i>Choose Input Method (Image OR Text OR Both)
+                                </h6>
+                                
+                                <div class="input-option">
+                                    <div class="option-header">
+                                        <i class="bi bi-image"></i>
+                                        Upload Problem Image (Optional)
+                                    </div>
+                                    <input type="file" class="form-control" id="promptImageFile" accept="image/*" onchange="previewImage(this, 'promptImagePreview')">
+                                    <img id="promptImagePreview" class="preview-image" alt="Image preview">
+                                </div>
+
+                                <div class="input-option">
+                                    <div class="option-header">
+                                        <i class="bi bi-chat-dots"></i>
+                                        Describe Problem or Give Instructions (Optional)
+                                    </div>
+                                    <textarea class="form-control" id="userPrompt" rows="3" placeholder="e.g., 'Solve this quadratic equation step by step' or 'Find the derivative of the function in the image' or just type your math problem here"></textarea>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-3" onclick="solveImageWithPrompt()">
+                                <span><i class="bi bi-robot me-2"></i>Process with AI</span>
+                            </button>
+                        </div>
+
+                        <!-- URL Tab -->
+                        <div id="url-content" class="tab-content" style="display: none;">
+                            <div class="mb-3">
+                                <label for="imageUrl" class="form-label">
+                                    <i class="bi bi-link-45deg"></i>Math Problem Image URL
+                                </label>
+                                <input type="url" class="form-control" id="imageUrl" placeholder="https://example.com/math-problem.jpg">
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="solveUrl()">
+                                <span><i class="bi bi-globe me-2"></i>Process URL</span>
+                            </button>
+                        </div>
+
+                        <!-- Check Solution Tab -->
+                        <div id="check-content" class="tab-content" style="display: none;">
+                            <div class="smart-input-section">
+                                <h6 style="color: var(--primary); margin-bottom: 20px; font-weight: 600;">
+                                    <i class="bi bi-check-circle me-2"></i>Solution Verification (Flexible Input Options)
+                                </h6>
+                                
+                                <!-- Problem Input Section -->
+                                <div style="background: rgba(16, 185, 129, 0.08); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+                                    <h6 style="color: var(--text-primary); margin-bottom: 15px;">
+                                        <i class="bi bi-question-circle me-2"></i>Math Problem (At least one required)
+                                    </h6>
+                                    
+                                    <div class="input-option">
+                                        <div class="option-header">
+                                            <i class="bi bi-pencil-square"></i>
+                                            Problem Text (Optional)
+                                        </div>
+                                        <textarea class="form-control" id="checkProblemText" rows="3" placeholder="e.g., Solve x² - 5x + 6 = 0 or describe the problem you want to verify"></textarea>
+                                    </div>
+
+                                    <div class="input-option">
+                                        <div class="option-header">
+                                            <i class="bi bi-image"></i>
+                                            Problem Image (Optional)
+                                        </div>
+                                        <input type="file" class="form-control" id="problemImageFile" accept="image/*" onchange="previewImage(this, 'problemImagePreview')">
+                                        <img id="problemImagePreview" class="preview-image" alt="Problem image preview">
+                                    </div>
+                                </div>
+
+                                <!-- Solution Input Section -->
+                                <div style="background: rgba(16, 185, 129, 0.05); border-radius: 12px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--success);">
+                                    <h6 style="color: var(--text-primary); margin-bottom: 15px;">
+                                        <i class="bi bi-file-check me-2"></i>Your Solution (At least one required)
+                                    </h6>
+                                    
+                                    <div class="input-option">
+                                        <div class="option-header">
+                                            <i class="bi bi-textarea-t"></i>
+                                            Solution Text (Optional)
+                                        </div>
+                                        <textarea class="form-control" id="checkSolutionText" rows="3" placeholder="Type your solution here, e.g., x = 2 and x = 3"></textarea>
+                                    </div>
+
+                                    <div class="input-option">
+                                        <div class="option-header">
+                                            <i class="bi bi-file-image"></i>
+                                            Solution Image (Optional)
+                                        </div>
+                                        <input type="file" class="form-control" id="solutionImageFile" accept="image/*" onchange="previewImage(this, 'solutionImagePreview')">
+                                        <img id="solutionImagePreview" class="preview-image" alt="Solution preview">
+                                    </div>
+                                </div>
+                                
+                                <div style="background: rgba(52, 211, 153, 0.08); border-radius: 8px; padding: 15px; margin-top: 15px; border-left: 3px solid var(--accent);">
+                                    <small style="color: var(--text-secondary); line-height: 1.5;">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        <strong>How it works:</strong> Provide the problem (as text and/or image) and your solution (as text and/or image). 
+                                        The AI will solve the problem correctly and compare it with your solution to verify accuracy.
+                                        <br><br>
+                                        <strong>Examples:</strong>
+                                        <br>• Problem as text + Solution as image
+                                        <br>• Problem as image + Solution as text  
+                                        <br>• Both problem and solution as images
+                                        <br>• Both problem and solution as text
+                                    </small>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-3" onclick="checkSolution()">
+                                <span><i class="bi bi-check-circle me-2"></i>Verify My Solution</span>
+                            </button>
+                        </div>
+
+                        <div id="resultDisplay" class="result-container"></div>
+                    </div>
+                </div>
+
+                <!-- Message Classifier Section -->
+                <div class="glass-card">
+                    <div style="padding: 48px;">
+                        <h4 class="section-title">
+                            <i class="bi bi-shield-check"></i>
+                            Message Classifier
+                        </h4>
+                        
+                        <div class="tab-content">
+                            <div class="mb-3">
+                                <label for="messageInput" class="form-label">
+                                    <i class="bi bi-chat-text"></i>Enter Message to Analyze
+                                </label>
+                                <textarea class="form-control" id="messageInput" rows="6" placeholder="Type or paste the message you want to classify for safety..."></textarea>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="classifyMessage()">
+                                <span><i class="bi bi-search me-2"></i>Analyze Content</span>
+                            </button>
+                        </div>
+
+                        <div id="classifyResult" class="result-container"></div>
                     </div>
                 </div>
             </div>
@@ -457,69 +1277,258 @@
     <script>
         const API_URL = window.location.origin;
 
-        // Function to preview uploaded images
+        // Enhanced tab switching functionality with better reliability
+        function switchTab(tabName, event) {
+            // Prevent any default behavior and event bubbling
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            console.log(`Switching to tab: ${tabName}`); // Debug log
+            
+            // Clear result display
+            const resultDisplay = document.getElementById('resultDisplay');
+            if (resultDisplay) {
+                resultDisplay.innerHTML = `
+                    <div class="loading" style="height: 100px; justify-content: center;">
+                        <p style="color: var(--text-secondary); margin: 0;">Select an option above and fill out the form to get started</p>
+                    </div>
+                `;
+            }
+
+            // Get all tab contents and tabs
+            const allTabContents = document.querySelectorAll('[id$="-content"]');
+            const allTabs = document.querySelectorAll('.custom-tab');
+            
+            // Remove active class from all tabs immediately
+            allTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Hide all tab contents immediately
+            allTabContents.forEach(content => {
+                content.style.display = 'none';
+                content.style.opacity = '0';
+                content.style.transform = 'translateY(10px)';
+            });
+            
+            // Show the target content
+            const targetContent = document.getElementById(tabName + '-content');
+            if (targetContent) {
+                // Force display first
+                targetContent.style.display = 'block';
+                
+                // Use requestAnimationFrame to ensure proper timing
+                requestAnimationFrame(() => {
+                    targetContent.style.opacity = '1';
+                    targetContent.style.transform = 'translateY(0)';
+                    targetContent.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                });
+            } else {
+                console.warn(`Tab content not found: ${tabName}-content`);
+            }
+            
+            // Add active class to clicked tab
+            if (event && event.target) {
+                const clickedTab = event.target.closest('.custom-tab');
+                if (clickedTab) {
+                    clickedTab.classList.add('active');
+                    
+                    // Add ripple effect
+                    addRippleEffect(clickedTab, event);
+                }
+            } else {
+                // Find tab by tabName if no event (for programmatic calls)
+                const tabButtons = document.querySelectorAll('.custom-tab');
+                tabButtons.forEach((tab, index) => {
+                    const tabNames = ['text', 'image', 'prompt', 'url', 'check'];
+                    if (tabNames[index] === tabName) {
+                        tab.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // Improved ripple effect function
+        function addRippleEffect(element, event) {
+            const ripple = document.createElement('div');
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                top: ${y}px;
+                width: ${size}px;
+                height: ${size}px;
+                background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+                border-radius: 50%;
+                pointer-events: none;
+                transform: scale(0);
+                animation: ripple 0.6s ease-out;
+                z-index: 1;
+            `;
+            
+            element.style.position = 'relative';
+            element.appendChild(ripple);
+            
+            setTimeout(() => {
+                if (ripple && ripple.parentNode) {
+                    ripple.remove();
+                }
+            }, 600);
+        }
+        
+        // Ensure tabs work on page load
+        function initializeTabs() {
+            const tabs = document.querySelectorAll('.custom-tab');
+            tabs.forEach((tab, index) => {
+                // Remove any existing event listeners
+                const newTab = tab.cloneNode(true);
+                tab.parentNode.replaceChild(newTab, tab);
+            });
+            
+            // Re-add event listeners to fresh elements
+            const freshTabs = document.querySelectorAll('.custom-tab');
+            const tabNames = ['text', 'image', 'prompt', 'url', 'check'];
+            
+            freshTabs.forEach((tab, index) => {
+                const tabName = tabNames[index];
+                if (tabName) {
+                    // Add multiple event types for better compatibility
+                    tab.addEventListener('click', function(e) {
+                        switchTab(tabName, e);
+                    });
+                    
+                    tab.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        switchTab(tabName, e);
+                    });
+                    
+                    // Make sure the onclick attribute also works
+                    tab.setAttribute('onclick', `switchTab('${tabName}', event)`);
+                    
+                    // Add keyboard support
+                    tab.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            switchTab(tabName, e);
+                        }
+                    });
+                    
+                    // Make tabs focusable
+                    tab.setAttribute('tabindex', '0');
+                    tab.setAttribute('role', 'tab');
+                    tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+                }
+            });
+            
+            // Ensure first tab is active by default
+            if (freshTabs.length > 0) {
+                freshTabs[0].classList.add('active');
+                switchTab('text', null);
+            }
+            
+            console.log('Tab system initialized with', freshTabs.length, 'tabs');
+        }
+
+        // Preview uploaded images
         function previewImage(input, previewId) {
             const preview = document.getElementById(previewId);
+            if (!preview) return;
+            
             const file = input.files[0];
             
             if (file) {
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    showNotification('Please upload a valid image file (JPEG, PNG, GIF, WebP)', 'warning');
+                    input.value = '';
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    showNotification('File size must be less than 10MB', 'warning');
+                    input.value = '';
+                    return;
+                }
+
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    preview.style.animation = 'fadeInUp 0.5s ease-out';
                 }
-                
+                reader.onerror = function() {
+                    showNotification('Error reading file', 'danger');
+                }
                 reader.readAsDataURL(file);
             } else {
                 preview.style.display = 'none';
+                preview.src = '';
             }
         }
 
-        // Function to format math output with enhanced LaTeX support
+        // Format math output with LaTeX support
         function formatMathOutput(text) {
-            // First, process LaTeX expressions
+            if (!text) return '';
+            
             let html = text;
             
-            // Replace display equations ($$...$$)
             html = html.replace(/\$\$(.*?)\$\$/gs, function(match, equation) {
-                return `<div class="math-equation">\\[${equation}\\]</div>`;
+                return `<div class="math-equation">\\[${equation.trim()}\\]</div>`;
             });
             
-            // Replace inline equations ($...$)
             html = html.replace(/\$(.*?)\$/g, function(match, equation) {
-                return `<span class="math-inline">\\(${equation}\\)</span>`;
+                return `<span class="math-inline">\\(${equation.trim()}\\)</span>`;
             });
             
-            // Convert line breaks
             html = html.replace(/\n/g, '<br>');
             
-            // Render LaTeX if MathJax is available
-            if (typeof MathJax !== 'undefined') {
-                setTimeout(() => {
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
                     MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }, 100);
-            }
+                }
+            }, 100);
             
             return html;
         }
 
         // Show loading indicator
         function showLoading(containerId) {
-            document.getElementById(containerId).innerHTML = `
-                <div class="loading">
-                    <div class="spinner-border text-primary spinner" role="status">
-                        <span class="visually-hidden">Loading...</span>
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="custom-spinner"></div>
+                        <p style="color: var(--text-primary); opacity: 0.8;">Processing with AI...</p>
+                        <small style="color: var(--text-secondary);">This may take a few moments</small>
                     </div>
-                    <p>Processing your request...</p>
-                </div>
-            `;
+                `;
+            }
         }
 
+        // Display error messages
+        function displayError(containerId, error) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Error:</strong> ${error.message || error}
+                    </div>
+                `;
+            }
+        }
+
+        // Solve text problem
         async function solveText() {
-            const problem = document.getElementById('textProblem').value;
+            const problem = document.getElementById('textProblem').value?.trim();
             if (!problem) {
-                alert('Please enter a problem');
+                showNotification('Please enter a math problem', 'warning');
                 return;
             }
             
@@ -533,34 +1542,42 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
+                
+                if (!data.solution) {
+                    throw new Error('No solution received from server');
+                }
+                
                 const formattedSolution = formatMathOutput(data.solution);
                 document.getElementById('resultDisplay').innerHTML = `
                     <div class="problem-display">
-                        <strong>Problem:</strong> ${data.problem}
+                        <div class="result-header">
+                            <i class="bi bi-question-circle"></i>Problem:
+                        </div>
+                        <p>${data.problem || problem}</p>
                     </div>
                     <div class="result-header">
-                        <i class="bi bi-lightbulb"></i> Solution:
+                        <i class="bi bi-lightbulb"></i>AI Solution:
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
                 
-                // Re-render MathJax after content is loaded
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }
             } catch (error) {
-                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('Text solving error:', error);
+                displayError('resultDisplay', error);
             }
         }
 
+        // Solve image problem
         async function solveImage() {
-            const file = document.getElementById('imageFile').files[0];
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput?.files[0];
+            
             if (!file) {
-                alert('Please upload an image');
+                showNotification('Please upload an image', 'warning');
                 return;
             }
             
@@ -568,50 +1585,57 @@
             
             const formData = new FormData();
             formData.append('file', file);
+            
             try {
-                const response = await fetch(`${API_URL}/solve/image`, { method: 'POST', body: formData });
+                const response = await fetch(`${API_URL}/solve/image`, { 
+                    method: 'POST', 
+                    body: formData 
+                });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
+                
+                if (!data.solution) {
+                    throw new Error('No solution received from server');
+                }
+                
                 const formattedSolution = formatMathOutput(data.solution);
                 document.getElementById('resultDisplay').innerHTML = `
                     <div class="result-header">
-                        <i class="bi bi-lightbulb"></i> Solution:
+                        <i class="bi bi-image"></i>Image Analysis Complete
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
                 
-                // Re-render MathJax after content is loaded
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }
             } catch (error) {
-                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('Image solving error:', error);
+                displayError('resultDisplay', error);
             }
         }
 
+        // Solve with smart input
         async function solveImageWithPrompt() {
-            const file = document.getElementById('promptImageFile').files[0];
-            const prompt = document.getElementById('userPrompt').value;
+            const fileInput = document.getElementById('promptImageFile');
+            const file = fileInput?.files[0];
+            const prompt = document.getElementById('userPrompt').value?.trim();
             
-            if (!file) {
-                alert('Please upload an image');
-                return;
-            }
-            
-            if (!prompt) {
-                alert('Please provide instructions');
+            if (!file && !prompt) {
+                showNotification('Please provide either an image, text description, or both', 'warning');
                 return;
             }
             
             showLoading('resultDisplay');
             
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('prompt', prompt);
+            if (file) {
+                formData.append('file', file);
+            }
+            if (prompt) {
+                formData.append('prompt', prompt);
+            }
             
             try {
                 const response = await fetch(`${API_URL}/solve/image-with-prompt`, { 
@@ -620,34 +1644,56 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
+                
+                if (!data.solution) {
+                    throw new Error('No solution received from server');
+                }
+                
                 const formattedSolution = formatMathOutput(data.solution);
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="problem-display">
-                        <strong>Your Instructions:</strong> ${data.user_prompt}
-                    </div>
+                
+                let content = '';
+                if (data.user_prompt) {
+                    content += `
+                        <div class="problem-display">
+                            <div class="result-header">
+                                <i class="bi bi-chat-dots"></i>Your Input:
+                            </div>
+                            <p>${data.user_prompt}</p>
+                        </div>
+                    `;
+                }
+                
+                content += `
                     <div class="result-header">
-                        <i class="bi bi-lightbulb"></i> Solution:
+                        <i class="bi bi-robot"></i>AI Analysis:
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
                 
-                // Re-render MathJax after content is loaded
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }
+                document.getElementById('resultDisplay').innerHTML = content;
+                
             } catch (error) {
-                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('Smart input solving error:', error);
+                displayError('resultDisplay', error);
             }
         }
 
+        // Solve from URL
         async function solveUrl() {
-            const url = document.getElementById('imageUrl').value;
+            const url = document.getElementById('imageUrl').value?.trim();
             if (!url) {
-                alert('Please enter an image URL');
+                showNotification('Please enter an image URL', 'warning');
+                return;
+            }
+
+            try {
+                new URL(url);
+            } catch {
+                showNotification('Please enter a valid URL', 'warning');
                 return;
             }
             
@@ -661,46 +1707,68 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
+                
+                if (!data.solution) {
+                    throw new Error('No solution received from server');
+                }
+                
                 const formattedSolution = formatMathOutput(data.solution);
                 document.getElementById('resultDisplay').innerHTML = `
                     <div class="result-header">
-                        <i class="bi bi-lightbulb"></i> Solution:
+                        <i class="bi bi-globe"></i>URL Analysis Complete
                     </div>
                     <div class="math-output">${formattedSolution}</div>
                 `;
                 
-                // Re-render MathJax after content is loaded
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
-                }
             } catch (error) {
-                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('URL solving error:', error);
+                displayError('resultDisplay', error);
             }
         }
 
+        // Check solution verification
         async function checkSolution() {
-            const problem = document.getElementById('checkProblem').value;
-            const file = document.getElementById('solutionImageFile').files[0];
+            const problemText = document.getElementById('checkProblemText').value?.trim();
+            const problemFileInput = document.getElementById('problemImageFile');
+            const problemFile = problemFileInput?.files[0];
             
-            if (!problem) {
-                alert('Please enter a problem');
+            const solutionText = document.getElementById('checkSolutionText').value?.trim();
+            const solutionFileInput = document.getElementById('solutionImageFile');
+            const solutionFile = solutionFileInput?.files[0];
+            
+            const hasProblemInput = problemText || problemFile;
+            const hasSolutionInput = solutionText || solutionFile;
+            
+            if (!hasProblemInput) {
+                showNotification('Please provide the problem either as text, image, or both', 'warning');
                 return;
             }
             
-            if (!file) {
-                alert('Please upload a solution image');
+            if (!hasSolutionInput) {
+                showNotification('Please provide your solution either as text, image, or both', 'warning');
                 return;
             }
             
             showLoading('resultDisplay');
             
             const formData = new FormData();
-            formData.append('problem', problem);
-            formData.append('file', file);
+            
+            if (problemText) {
+                formData.append('problem_text', problemText);
+            }
+            if (problemFile) {
+                formData.append('problem_file', problemFile);
+            }
+            if (solutionText) {
+                formData.append('solution_text', solutionText);
+            }
+            if (solutionFile) {
+                formData.append('solution_file', solutionFile);
+            }
             
             try {
                 const response = await fetch(`${API_URL}/check-solution`, { 
@@ -709,45 +1777,200 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('Server response:', errorText);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
                 
                 let resultClass = 'alert-warning';
                 let icon = 'bi-question-circle';
+                let statusText = 'Unclear';
                 
-                if (data.result.toUpperCase().includes('CORRECT')) {
+                if (data.comparison === 0) {
                     resultClass = 'alert-success';
                     icon = 'bi-check-circle';
-                } else if (data.result.toUpperCase().includes('INCORRECT')) {
+                    statusText = 'Correct ✓';
+                } else if (data.comparison === 1) {
                     resultClass = 'alert-danger';
                     icon = 'bi-x-circle';
+                    statusText = 'Incorrect ✗';
                 }
                 
+                let problemDisplay = '';
+                if (data.inputs?.problem_text_provided || data.inputs?.problem_image_provided) {
+                    problemDisplay = `
+                        <div class="problem-display">
+                            <div class="result-header">
+                                <i class="bi bi-question-circle"></i>Problem Input:
+                            </div>
+                    `;
+                    
+                    if (data.inputs.problem_text_provided) {
+                        problemDisplay += `<p><strong>Text:</strong> ${problemText}</p>`;
+                    }
+                    if (data.inputs.problem_image_provided) {
+                        problemDisplay += `<p><strong>Image:</strong> ✓ Uploaded</p>`;
+                    }
+                    
+                    problemDisplay += `</div>`;
+                }
+                
+                let solutionInputDisplay = '';
+                if (data.inputs?.solution_text_provided || data.inputs?.solution_image_provided) {
+                    solutionInputDisplay = `
+                        <div class="problem-display">
+                            <div class="result-header">
+                                <i class="bi bi-file-text"></i>Your Solution Input:
+                            </div>
+                    `;
+                    
+                    if (data.inputs.solution_text_provided) {
+                        solutionInputDisplay += `<p><strong>Text:</strong> ${solutionText}</p>`;
+                    }
+                    if (data.inputs.solution_image_provided) {
+                        solutionInputDisplay += `<p><strong>Image:</strong> ✓ Uploaded</p>`;
+                    }
+                    
+                    solutionInputDisplay += `</div>`;
+                }
+                
+                const formattedCorrectSolution = formatMathOutput(data.correct_solution || 'Solution not provided');
+                const formattedExtractedSolution = data.extracted_solution ? formatMathOutput(data.extracted_solution) : '';
+                
                 document.getElementById('resultDisplay').innerHTML = `
+                    ${problemDisplay}
+                    ${solutionInputDisplay}
                     <div class="problem-display">
-                        <strong>Problem:</strong> ${data.problem}
-                    </div>
-                    <div class="problem-display mt-2">
-                        <strong>Correct Solution:</strong> ${data.correct_solution}
-                    </div>
-                    <div class="alert ${resultClass} mt-3">
                         <div class="result-header">
-                            <i class="bi ${icon}"></i> Result:
+                            <i class="bi bi-lightbulb"></i>Correct Solution:
                         </div>
-                        <p class="mb-0">${data.result}</p>
+                        <div class="math-output">${formattedCorrectSolution}</div>
+                    </div>
+                    ${data.extracted_solution ? `
+                    <div class="problem-display">
+                        <div class="result-header">
+                            <i class="bi bi-search"></i>Extracted from Your Solution:
+                        </div>
+                        <div class="math-output">${formattedExtractedSolution}</div>
+                    </div>
+                    ` : ''}
+                    <div class="alert ${resultClass}">
+                        <div class="result-header">
+                            <i class="bi ${icon}"></i>Verification Result:
+                        </div>
+                        <p class="mb-2"><strong>Status:</strong> ${statusText}</p>
+                        ${data.raw_result ? `<p class="mb-0"><small><strong>AI Analysis:</strong> ${data.raw_result}</small></p>` : ''}
+                        <div style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">
+                            <strong>Input Summary:</strong>
+                            Problem: ${data.inputs?.problem_text_provided ? 'Text' : ''}${data.inputs?.problem_text_provided && data.inputs?.problem_image_provided ? ' + ' : ''}${data.inputs?.problem_image_provided ? 'Image' : ''} | 
+                            Solution: ${data.inputs?.solution_text_provided ? 'Text' : ''}${data.inputs?.solution_text_provided && data.inputs?.solution_image_provided ? ' + ' : ''}${data.inputs?.solution_image_provided ? 'Image' : ''}
+                        </div>
                     </div>
                 `;
+                
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
+                }
+                
             } catch (error) {
-                document.getElementById('resultDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('Solution checking error:', error);
+                displayError('resultDisplay', error);
             }
         }
 
+        // Generate math questions
+        async function generateQuestions() {
+            const grade = document.getElementById('gradeSelect').value;
+            const subject = document.getElementById('subjectInput').value?.trim();
+            const count = document.getElementById('questionCount').value;
+            
+            if (!grade) {
+                showNotification('Please select a grade level', 'warning');
+                return;
+            }
+            
+            if (!subject) {
+                showNotification('Please enter a topic or subject', 'warning');
+                return;
+            }
+            
+            showLoading('questionResult');
+            
+            try {
+                const response = await fetch(`${API_URL}/generate-question`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(subject)}&count=${encodeURIComponent(count)}`
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.questions || !Array.isArray(data.questions)) {
+                    throw new Error('No questions received from server');
+                }
+                
+                let questionsHtml = `
+                    <div class="result-header">
+                        <i class="bi bi-list-ol"></i>Generated Questions - Grade ${data.grade} (${data.subject})
+                    </div>
+                `;
+                
+                data.questions.forEach((q, index) => {
+                    questionsHtml += `
+                        <div class="problem-display" style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <strong style="color: var(--primary);">Question ${q.number || index + 1}:</strong>
+                                <button class="btn btn-sm interactive-btn" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.3) 100%); border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; padding: 8px 20px; font-size: 0.85rem; font-weight: 600; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;" onclick="toggleAnswer(${index})" onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.background='linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)'; this.style.color='white'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.4)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.3) 100%)'; this.style.color='var(--primary)'; this.style.boxShadow='none';">
+                                    <i class="bi bi-eye" id="toggle-icon-${index}"></i> Show Answer
+                                </button>
+                            </div>
+                            <p style="margin-bottom: 10px; line-height: 1.6;">${q.question || 'Question not available'}</p>
+                            <div id="answer-${index}" style="display: none; background: rgba(16, 185, 129, 0.08); padding: 16px; border-radius: 10px; border-left: 3px solid var(--primary); margin-top: 12px;">
+                                <strong style="color: var(--primary);">Answer:</strong> ${q.answer || 'Answer not available'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('questionResult').innerHTML = questionsHtml;
+                
+            } catch (error) {
+                console.error('Question generation error:', error);
+                displayError('questionResult', error);
+            }
+        }
+
+        // Toggle answer visibility
+        function toggleAnswer(index) {
+            const answerDiv = document.getElementById(`answer-${index}`);
+            const toggleIcon = document.getElementById(`toggle-icon-${index}`);
+            const toggleButton = toggleIcon?.parentElement;
+            
+            if (answerDiv && toggleIcon && toggleButton) {
+                if (answerDiv.style.display === 'none') {
+                    answerDiv.style.display = 'block';
+                    answerDiv.style.animation = 'fadeInUp 0.3s ease-out';
+                    toggleIcon.className = 'bi bi-eye-slash';
+                    toggleButton.innerHTML = '<i class="bi bi-eye-slash" id="toggle-icon-' + index + '"></i> Hide Answer';
+                } else {
+                    answerDiv.style.display = 'none';
+                    toggleIcon.className = 'bi bi-eye';
+                    toggleButton.innerHTML = '<i class="bi bi-eye" id="toggle-icon-' + index + '"></i> Show Answer';
+                }
+            }
+        }
+
+        // Classify message
         async function classifyMessage() {
-            const message = document.getElementById('messageInput').value;
+            const message = document.getElementById('messageInput').value?.trim();
             if (!message) {
-                alert('Please enter a message');
+                showNotification('Please enter a message to analyze', 'warning');
                 return;
             }
             
@@ -761,27 +1984,135 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                 }
                 
                 const data = await response.json();
-                const status = data.classification === 1 ? 'Problematic (1)' : 'Safe (0)';
-                const alertClass = data.classification === 1 ? 'alert-danger classification-unsafe' : 'alert-success classification-safe';
-                const icon = data.classification === 1 ? 'bi-exclamation-triangle' : 'bi-check-circle';
+                
+                const status = data.classification === 1 ? 'Problematic Content Detected' : 'Content is Safe';
+                const alertClass = data.classification === 1 ? 'classification-unsafe' : 'classification-safe';
+                const icon = data.classification === 1 ? 'bi-exclamation-triangle' : 'bi-shield-check';
+                const statusCode = data.classification === 1 ? '(Classification: 1)' : '(Classification: 0)';
                 
                 document.getElementById('classifyResult').innerHTML = `
                     <div class="${alertClass}">
                         <div class="result-header">
-                            <i class="bi ${icon}"></i> Classification Result:
+                            <i class="bi ${icon}"></i>Analysis Complete
                         </div>
-                        <p class="mb-2"><strong>Message:</strong> "${data.message}"</p>
-                        <p class="mb-0"><strong>Status:</strong> ${status}</p>
+                        <div style="background: rgba(0,0,0,0.1); padding: 18px; border-radius: 10px; margin: 18px 0; border: 1px solid rgba(255,255,255,0.1);">
+                            <strong>Message:</strong><br>
+                            <em style="font-size: 0.95rem; line-height: 1.5;">"${data.message || message}"</em>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <span style="font-size: 1.1em; font-weight: 600;">${status}</span>
+                            <span style="opacity: 0.7; font-size: 0.9em;">${statusCode}</span>
+                        </div>
                     </div>
                 `;
             } catch (error) {
-                document.getElementById('classifyResult').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                console.error('Message classification error:', error);
+                displayError('classifyResult', error);
             }
         }
+
+        // Enhanced notification system
+        function showNotification(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'warning' ? 'rgba(245, 158, 11, 0.15)' : 
+                           type === 'danger' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)';
+            const borderColor = type === 'warning' ? 'var(--warning)' : 
+                               type === 'danger' ? 'var(--danger)' : 'var(--info)';
+            
+            toast.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                z-index: 9999;
+                min-width: 350px;
+                max-width: 450px;
+                background: ${bgColor};
+                backdrop-filter: blur(20px);
+                border: 1px solid ${borderColor};
+                border-radius: 16px;
+                padding: 20px;
+                color: var(--text-primary);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                font-family: Inter, sans-serif;
+            `;
+            
+            toast.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : type === 'danger' ? 'x-circle' : 'info-circle'}" style="color: ${borderColor}; font-size: 1.2rem; margin-top: 2px;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 4px; color: var(--text-primary);">
+                            ${type === 'warning' ? 'Warning' : type === 'danger' ? 'Error' : 'Info'}
+                        </div>
+                        <div style="font-size: 0.9rem; line-height: 1.4; color: var(--text-secondary);">${message}</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 0; margin-left: 8px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Math Bot initialized with enhanced UI');
+            
+            // Add entrance animations with stagger effect
+            const animateElements = document.querySelectorAll('.feature-card, .glass-card');
+            animateElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(40px)';
+                el.style.animation = `fadeInUp 0.8s ease-out ${0.1 + index * 0.1}s forwards`;
+            });
+
+            // Initialize result containers
+            const resultContainers = ['resultDisplay', 'questionResult', 'classifyResult'];
+            resultContainers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loading" style="height: 120px; justify-content: center;">
+                            <div style="text-align: center;">
+                                <i class="bi bi-cpu" style="font-size: 2rem; color: var(--primary); margin-bottom: 12px; opacity: 0.6;"></i>
+                                <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Ready to assist with your mathematical problems!</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Add fade-in animation for main elements
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(40px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                
+                @keyframes slideInRight {
+                    from { transform: translateX(100%) scale(0.95); opacity: 0; }
+                    to { transform: translateX(0) scale(1); opacity: 1; }
+                }
+                
+                @keyframes slideOutRight {
+                    to { transform: translateX(100%) scale(0.95); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            console.log('Enhanced Math Bot initialization complete');
+        });
     </script>
 </body>
 </html>
